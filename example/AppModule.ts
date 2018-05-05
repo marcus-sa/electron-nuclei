@@ -8,10 +8,10 @@ import { WebTorrent } from './windows'
   windows: [
     WebTorrent
   ],
-  components: [
+  /*components: [
     //AutoUpdater, 
     Service, 
     Logger
-  ]
+  ]*/
 })
 export class AppModule {}

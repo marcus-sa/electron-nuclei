@@ -1,8 +1,8 @@
 import * as path from 'path'
 import * as fs from 'fs'
-import { arch } from 'arch'
-import { get } from 'lodash.get'
-import { set } from 'lodash.set'
+import * as arch from 'arch'
+import * as get from 'lodash.get'
+import * as set from 'lodash.set'
 import * as electron from 'electron'
 
 import { AppOptions } from './types'
@@ -12,14 +12,14 @@ export type IConfig = {
   osArch: string,
   app: {
     name: string,
-    crashReporter: string,
     description: string
-    dev: boolean,
+    crashReporter?: string
+    dev?: boolean
     //portable: boolean
   },
   path: {
-    config: string,
-    portable: string
+    config?: string
+    portable?: string
   }
 } | object
 
@@ -84,7 +84,7 @@ export class Config {
     }
   }
 
-  public create(appOptions: AppOptions) {
+  public create(appOptions: AppOptions | any) {
     const pckg = require(path.join(appOptions.processPath, 'package.json'))
 
     this.packageName = appOptions.name || pckg.productName || pckg.name
@@ -112,7 +112,7 @@ export class Config {
     }
   }
 
-  public get(path: string): IConfig {
+  public get(path: string): any {
     return get(this._config, path)
   }
 

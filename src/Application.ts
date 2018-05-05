@@ -1,19 +1,21 @@
 import { app, BrowserWindow } from 'electron'
-import { pick } from 'lodash.pick'
-import { omit } from 'lodash.omit'
+import * as pick from 'lodash.pick'
+import * as omit from 'lodash.omit'
 import * as path from 'path'
 
-import { Container, NucleiModule } from './injector/Container'
-import { ModuleMetadata, NucleiClassDecorator } from './interfaces'
-import { getNucleiMetadata } from './decorators/utils'
-import { windowMetadataKeys, browserWindowOptions, WindowEvents } from './constants'
+import { windowMetadataKeys, browserWindowOptions } from './constants'
+import { NucleiModule, NucleiClassDecorator, ModuleMetadata } from './types'
 import { Config } from './Config'
+import { WindowEvents, AppEvents } from './events'
+import { Container } from './injector/Container'
+import { getNucleiMetadata } from './decorators/utils'
+import { CrashReporter } from './CrashReporter'
 
 export class Application {
 
   private shouldQuit: boolean = false
 
-  public constructor(
+  constructor(
     private readonly metadata: ModuleMetadata, 
     private readonly container: Container
   ) {}
@@ -35,7 +37,7 @@ export class Application {
 
   public async start() {
     if (!this.shouldQuit) {
-      const config = this.container.get(Config)
+      //const config = this.container.get(Config)
 
       /*if (config.IS_PORTABLE) {
         const path = require('path')
@@ -45,42 +47,45 @@ export class Application {
         app.setPath('temp', path.join(config.CONFIG_PATH, 'Temp'))
       }*/
 
-      if (config.get('app.crashReporter')) {
+      /*if (config.get('app.crashReporter')) {
+        this.container.get(CrashReporter).start()
         // Create crash reporter here
-      }
+      }*/
 
 
       // @TODO: How should windows be initiated?
-      this.metadata.windows.forEach((window: any) => { 
-        const WindowInstance = this.container.get(window)
-        const windowOptions = getNucleiMetadata(window, windowMetadataKeys)
-
-        const browserWindow = new BrowserWindow(
-          pick(windowOptions, browserWindowOptions)
-        )
-
-        WindowInstance.browserWindow = browserWindow
-
-        const { template, toggleDevtools } = omit(windowOptions, browserWindowOptions)
-
-        if (template) browserWindow.loadURL(template)
-
-        WindowInstance.toggleDevtools = function () {
-          this.browserWindow.once(WindowEvents.READY_TO_SHOW, () => {
-            if (this.browserWindow.webContents.isDevToolsOpened()) {
-              this.browserWindow.webContents.closeDevTools()
-              this.browserWindow.hide()
-            } else {
-              this.browserWindow.webContents.openDevTools(/*{ detach: true }*/)
-            }
-          })
-        }
-
-        if (toggleDevtools) WindowInstance.toggleDevtools()
-
-        /*const BaseWindow = class extends WindowInstance {
-
-        }*/
+      app.on(AppEvents.READY, () => {
+        (this.metadata.windows || []).forEach((window: any) => { 
+          const WindowInstance = this.container.get(window)
+          const windowOptions = getNucleiMetadata(window, windowMetadataKeys)
+  
+          const browserWindow = new BrowserWindow(
+            pick(windowOptions, browserWindowOptions)
+          )
+  
+          WindowInstance.browserWindow = browserWindow
+  
+          const { template, toggleDevtools } = omit(windowOptions, browserWindowOptions)
+  
+          if (template) browserWindow.loadURL(template)
+  
+          WindowInstance.toggleDevtools = function () {
+            this.browserWindow.once(WindowEvents.READY, () => {
+              if (this.browserWindow.webContents.isDevToolsOpened()) {
+                this.browserWindow.webContents.closeDevTools()
+                this.browserWindow.hide()
+              } else {
+                this.browserWindow.webContents.openDevTools(/*{ detach: true }*/)
+              }
+            })
+          }
+  
+          if (toggleDevtools) WindowInstance.toggleDevtools()
+  
+          /*const BaseWindow = class extends WindowInstance {
+  
+          }*/
+        })
       })
     }
   }

@@ -1,15 +1,14 @@
 import { app, AutoUpdater } from 'electron'
 
-import { PARAMTYPES_METADATA, AppEvents } from './constants'
+import { PARAMTYPES_METADATA, moduleMetadataKeys } from './constants'
 import { Container } from './injector/Container'
 import { Module, Subscribe } from './decorators'
 
-import { moduleMetadataKeys } from './constants'
-import { NucleiType, ModuleMetadata } from './interfaces'
+import { AppOptions, ModuleMetadata, NucleiType } from './types'
 import { Application } from './Application'
 import { getNucleiMetadata } from './decorators/utils'
 import { Config } from './Config'
-import { AppOptions } from './types'
+import { CrashReporter } from './CrashReporter'
 
 export abstract class Factory {
 
@@ -28,6 +27,9 @@ export abstract class Factory {
 
     // Bind and create application config
     this.container.bind(Config).create(options)
+
+    // Bind crash reporter
+    this.container.bind(CrashReporter)
 
     return new Application(this.metadata, this.container)
   }

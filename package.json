@@ -9,6 +9,7 @@
     "build": "node bundle.js"
   },
   "dependencies": {
+    "application-config": "^1.0.1",
     "arch": "^2.1.0",
     "electron": "^2.0.0",
     "lodash.get": "^4.4.2",

@@ -1,13 +1,11 @@
 import { validateMetadata, defineNucleiMetadata } from './utils'
-
 import { PARAMTYPES_METADATA, componentMetadataKeys } from '../constants'
-import { NucleiClassDecorator } from '../interfaces'
-import { ComponentOptions } from '../types'
+import { NucleiClassDecorator, ComponentMetadata } from '../types'
 
-export function Component(metadata?: ComponentOptions): NucleiClassDecorator {
-  validateMetadata<ComponentOptions>(metadata, componentMetadataKeys, Component.name)
+export function Component(metadata?: ComponentMetadata): NucleiClassDecorator {
+  validateMetadata<ComponentMetadata>(metadata, componentMetadataKeys, Component.name)
 
-  return (target, key) => {
-    defineNucleiMetadata<ComponentOptions>(metadata, target)
+  return (module, key) => {
+    defineNucleiMetadata<ComponentMetadata>(metadata, module)
   }
 }

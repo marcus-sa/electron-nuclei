@@ -1,22 +1,33 @@
 import { BrowserWindowConstructorOptions } from 'electron'
 
-export type WindowOptions = {
+import { Window, Component } from './decorators'
+
+export interface NucleiType {
+  new(...args: any[]): any
+}
+
+export type NucleiClassDecorator = (target: NucleiType, key?: string | Symbol, descriptor?: PropertyDescriptor) => any
+
+export type NucleiModule = NucleiType | NucleiClassDecorator
+
+export type WindowMetadata = {
   //devTools?: boolean
   toggleDevtools?: boolean
   tempate?: string
 } & BrowserWindowConstructorOptions | undefined
 
-export type ComponentOptions = {
+export type ComponentMetadata = {
   lol?: string
 } | undefined
-
-export type ModuleOptions = {
-  windows?: any 
-  components?: any
-}
 
 export type AppOptions = {
   processPath?: string
   crashReporter?: string
   development?: boolean
-} | any
+  portable?: string | boolean
+}// | object
+
+export interface ModuleMetadata {
+  windows?: (typeof Window | NucleiModule)[]
+  components?: (typeof Component | NucleiModule)[]
+}

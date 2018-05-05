@@ -6,7 +6,5 @@ import { Logger } from './Logger'
 export class Service {
   public constructor(
     private readonly logger: Logger
-  ) {
-    logger.log('test')
-  }
+  ) { }
 }

@@ -1,4 +1,4 @@
-import { NucleiType } from '../interfaces'
+import { NucleiType } from '../types'
 
 export const validateMetadata = <MD>(metadata: MD, metadataKeys: string[], name: string) => {
   Object.keys(metadata || {}).forEach(key => {
@@ -8,24 +8,20 @@ export const validateMetadata = <MD>(metadata: MD, metadataKeys: string[], name:
   })
 }
 
-export const defineNucleiMetadata = <MD>(metadata: MD, target: NucleiType) => {
+export const defineNucleiMetadata = <MD>(metadata: MD, module: NucleiType) => {
   Object.keys(metadata || {}).forEach(property => {
-    Reflect.defineMetadata(property, metadata[property], target)
+    Reflect.defineMetadata(property, metadata[property], module)
   })
 }
 
-export const getNucleiMetadata = <T>(target: NucleiType, metadataKeys: string[]) => {
-  const metadata = Reflect.getMetadataKeys(target)
-    .reduce((metadata: object, key: string) => {
-      metadata[key] = Reflect.getMetadata(key, target)
+export const getNucleiMetadata = <T>(module: NucleiType, metadataKeys: string[]) => {
+  return Reflect.getMetadataKeys(module)//metadataKeys
+    .reduce((metadata: object, key: string) => ({
+      ...metadata,
+      [key]: Reflect.getMetadata(key, module)
+    }), {})
 
-      return metadata
-    }, {} as any)
-
-  validateMetadata(metadata, metadataKeys, target.name)
-  
-  return metadata
-  /*return metadataKeys.reduce(() => {
-    Reflect.getMetadata
-  }, {} as any)*/
+  // No reason to revalidate metadata as it 
+  // has already been done before decorators have reflected 
+  //validateMetadata(metadata, metadataKeys, module.name)
 }

@@ -1,4 +1,4 @@
-import { Window } from '../../src'
+import { Window, CrashReporter } from '../../src'
 
 @Window({
   // Nuclei window metadata
@@ -13,10 +13,14 @@ import { Window } from '../../src'
   maximizable: false,
   minimizable: false,
   resizable: false,
-  show: false,
+  show: true,
   skipTaskbar: true,
   title: 'webtorrent-hidden-window',
   useContentSize: true,
   width: 150,
 })
-export class WebTorrent {}
+export class WebTorrent {
+
+  //public constructor(private readonly crashReporter: CrashReporter) {}
+
+}

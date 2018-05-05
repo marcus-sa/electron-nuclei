@@ -1,12 +1,12 @@
 import { validateMetadata, defineNucleiMetadata } from './utils'
-import { NucleiClassDecorator } from '../interfaces'
+import { NucleiClassDecorator, WindowMetadata } from '../types'
 import { windowMetadataKeys } from '../constants'
-import { WindowOptions } from '../types'
 
-export function Window(metadata?: WindowOptions): NucleiClassDecorator {
-  validateMetadata<WindowOptions>(metadata, windowMetadataKeys, Window.name)
+export function Window(metadata?: WindowMetadata): NucleiClassDecorator {
+  validateMetadata<WindowMetadata>(metadata, windowMetadataKeys, Window.name)
 
-  return (target) => {
-    defineNucleiMetadata<WindowOptions>(metadata, target)
+  return (module) => {
+    console.log(module)
+    defineNucleiMetadata<WindowMetadata>(metadata, module)
   }
 }
