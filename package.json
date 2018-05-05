@@ -1,0 +1,19 @@
+{
+  "name": "nuclei",
+  "version": "1.0.0",
+  "description": "Create modern Electron apps",
+  "main": "./dist/index.js",
+  "scripts": {
+    "dev": "ts-node ./example/index.ts",
+    "build": "node bundle.js"
+  },
+  "dependencies": {
+    "reflect-metadata": "0.1.12",
+    "typescript": "2.8.3"
+  },
+  "devDependencies": {
+    "@types/node": "^10.0.4",
+    "parcel-bundler": "^1.6.1",
+    "ts-node": "^6.0.2"
+  }
+}
