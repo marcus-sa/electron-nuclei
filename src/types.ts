@@ -14,3 +14,9 @@ export type ModuleOptions = {
   windows?: any 
   components?: any
 }
+
+export type AppOptions = {
+  processPath?: string
+  crashReporter?: string
+  development?: boolean
+} | any

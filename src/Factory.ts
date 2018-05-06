@@ -8,6 +8,8 @@ import { moduleMetadataKeys } from './constants'
 import { NucleiType, ModuleMetadata } from './interfaces'
 import { Application } from './Application'
 import { getNucleiMetadata } from './decorators/utils'
+import { Config } from './Config'
+import { AppOptions } from './types'
 
 export abstract class Factory {
 
@@ -15,7 +17,7 @@ export abstract class Factory {
 
   public static container = new Container()
 
-  public static async create(module: NucleiType, options?: any) {
+  public static async create(module: NucleiType, options: AppOptions = {}) {
     this.metadata = getNucleiMetadata(module, moduleMetadataKeys)
 
     Object.keys(this.metadata).forEach(key => {
@@ -23,6 +25,9 @@ export abstract class Factory {
         this.container.bind(module)
       })
     })
+
+    // Bind and create application config
+    this.container.bind(Config).create(options)
 
     return new Application(this.metadata, this.container)
   }

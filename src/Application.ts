@@ -7,6 +7,7 @@ import { Container, NucleiModule } from './injector/Container'
 import { ModuleMetadata, NucleiClassDecorator } from './interfaces'
 import { getNucleiMetadata } from './decorators/utils'
 import { windowMetadataKeys, browserWindowOptions, WindowEvents } from './constants'
+import { Config } from './Config'
 
 export class Application {
 
@@ -24,11 +25,18 @@ export class Application {
 
     this.shouldQuit = app.makeSingleInstance(cb)
 
-    if (this.shouldQuit) app.quit()
+    if (this.shouldQuit) {
+      // app.quit doesn't quite work on windows
+      return process.platform === 'win32'
+        ? app.exit()
+        : app.quit()
+    }
   }
 
   public async start() {
     if (!this.shouldQuit) {
+      const config = this.container.get(Config)
+
       /*if (config.IS_PORTABLE) {
         const path = require('path')
         // Put all user data into the "Portable Settings" folder
@@ -36,6 +44,10 @@ export class Application {
         // Put Electron crash files, etc. into the "Portable Settings\Temp" folder
         app.setPath('temp', path.join(config.CONFIG_PATH, 'Temp'))
       }*/
+
+      if (config.get('app.crashReporter')) {
+        // Create crash reporter here
+      }
 
 
       // @TODO: How should windows be initiated?
