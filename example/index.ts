@@ -1,7 +1,9 @@
-import { Factory } from "../src";
+import { Factory } from '../src'
 
-import { AppModule } from "./app.module";
+import { AppModule } from './AppModule'
 
-(async () => {
-  await Factory.create(AppModule);
-})();
+;(async () => {
+  const app = await Factory.create(AppModule)
+  //app.preventMultipleInstances()
+  await app.start()
+})()

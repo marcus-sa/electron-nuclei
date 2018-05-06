@@ -1,4 +1,4 @@
-import { Component } from '../src'
+import { Component } from '../../src'
 
 @Component()
 export class Logger {

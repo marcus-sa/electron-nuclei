@@ -1,16 +1,12 @@
 import { validateMetadata, defineNucleiMetadata } from './utils'
-import { metadata, PARAMTYPES_METADATA, SELF_DECLARED_DEPS_METADATA } from '../constants'
+import { moduleMetadataKeys } from '../constants'
 import { NucleiClassDecorator } from '../interfaces'
+import { ModuleOptions } from '../types'
 
-export const metadataKeys = [
-  metadata.WINDOWS,
-  metadata.COMPONENTS
-]
-
-export function Module(metadata: any): NucleiClassDecorator {
-  validateMetadata<any>(metadata, metadataKeys, Module.name)
+export function Module(metadata: ModuleOptions): NucleiClassDecorator {
+  validateMetadata<ModuleOptions>(metadata, moduleMetadataKeys, Module.name)
 
   return (target, key) => {
-    defineNucleiMetadata<any>(metadata, target)
+    defineNucleiMetadata<ModuleOptions>(metadata, target)
   }
 }

@@ -4,10 +4,14 @@
   "description": "Create modern Electron apps",
   "main": "./dist/index.js",
   "scripts": {
-    "dev": "ts-node ./example/index.ts",
+    "start": "electron dist/index.js",
+    "test": "electron -r ts-node/register example/index.ts",
     "build": "node bundle.js"
   },
   "dependencies": {
+    "electron": "^2.0.0",
+    "lodash.omit": "^4.5.0",
+    "lodash.pick": "^4.4.0",
     "reflect-metadata": "0.1.12",
     "typescript": "2.8.3"
   },

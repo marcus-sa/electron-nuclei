@@ -1,25 +1,38 @@
-import { PARAMTYPES_METADATA } from './constants'
+import { app, AutoUpdater } from 'electron'
+
+import { PARAMTYPES_METADATA, AppEvents } from './constants'
 import { Container } from './injector/Container'
-import { Module } from "./decorators";
+import { Module, Subscribe } from './decorators'
 
-import { NucleiType } from './interfaces/NucleiType'
+import { moduleMetadataKeys } from './constants'
+import { NucleiType, ModuleMetadata } from './interfaces'
+import { Application } from './Application'
+import { getNucleiMetadata } from './decorators/utils'
 
-export class Factory {
+export abstract class Factory {
+
+  private static metadata: ModuleMetadata
 
   public static container = new Container()
 
-  public static async create(module: NucleiType) {
-    const metadata = Reflect.getMetadataKeys(module)
-      .reduce((opts: object, key: string) => {
-        opts[key] = Reflect.getMetadata(key, module)
+  public static async create(module: NucleiType, options?: any) {
+    this.metadata = getNucleiMetadata(module, moduleMetadataKeys)
 
-        return opts
-      }, {})
-
-    Object.keys(metadata).forEach(key => {
-      metadata[key].forEach(module => {
-        Factory.container.set(module)
+    Object.keys(this.metadata).forEach(key => {
+      this.metadata[key].forEach(module => {
+        this.container.bind(module)
       })
-    }) 
+    })
+
+    return new Application(this.metadata, this.container)
   }
+
+  /*@Subscribe(AppEvents.READY)
+  private static createWindows() {
+    Object.keys(this.metadata.windows).forEach((window: any) => {
+      console.log(window)
+      this.container.get(window.name)
+    })
+  }*/
+
 }

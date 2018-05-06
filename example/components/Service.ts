@@ -1,6 +1,6 @@
-import { Component } from '../src'
+import { Component } from '../../src'
 
-import { Logger } from './logger.component'
+import { Logger } from './Logger'
 
 @Component()
 export class Service {

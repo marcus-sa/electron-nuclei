@@ -1,0 +1,1 @@
+export { WebTorrent } from './WebTorrent'
