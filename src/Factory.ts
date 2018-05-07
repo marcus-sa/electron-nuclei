@@ -8,7 +8,7 @@ import { AppOptions, ModuleMetadata, NucleiType } from './types'
 import { Application } from './Application'
 import { getNucleiMetadata } from './decorators/utils'
 import { Config } from './Config'
-import { CrashReporter } from './CrashReporter'
+//import { CrashReporter } from './CrashReporter'
 
 export abstract class Factory {
 
@@ -29,7 +29,8 @@ export abstract class Factory {
     this.container.bind(Config).create(options)
 
     // Bind crash reporter
-    this.container.bind(CrashReporter)
+    // Moved crash reporter to external plugin
+    // this.container.bind(CrashReporter)
 
     return new Application(this.metadata, this.container)
   }

@@ -13,8 +13,10 @@ export type IConfig = {
   app: {
     name: string,
     description: string
+    version: string | number
     crashReporter?: string
     dev?: boolean
+    url?: string
     //portable: boolean
   },
   path: {
@@ -90,6 +92,7 @@ export class Config {
     this.packageName = appOptions.name || pckg.productName || pckg.name
 
     const appConfig = require('application-config')(this.packageName)
+    const appVersion = appOptions.version || pckg.version
     const portablePath = this.getPortablePath(appOptions.portable)
   
     const configPath = appOptions.portable
@@ -103,6 +106,8 @@ export class Config {
         description: pckg.description,
         dev: appOptions.development || !this.isProduction(),
         crashReporter: appOptions.crashReporter,
+        version: appVersion,
+        url: appOptions.url
         //portable: !!appOptions.portable
       },
       path: {

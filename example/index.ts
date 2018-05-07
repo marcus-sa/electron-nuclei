@@ -7,7 +7,7 @@ import { AppModule } from './AppModule'
     processPath: process.cwd(),
     portable: false,
     development: process.env.NODE_ENV === 'development',
-    crashReporter: 'some url to report to'
+    //crashReporter: 'some url to report to'
   })
   
   app.preventMultipleInstances(() => {})

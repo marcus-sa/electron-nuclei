@@ -1,8 +1,6 @@
 import { crashReporter } from 'electron'
 
-import { AppEvents } from './events'
-import { SingleScope, Component, Subscribe } from './decorators'
-import { Config } from './Config'
+import { AppEvents, SingleScope, Component, Subscribe, Config } from 'electron-nuclei'
 
 @Component()
 @SingleScope()
