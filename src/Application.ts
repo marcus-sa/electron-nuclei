@@ -9,7 +9,7 @@ import { Config } from './Config'
 import { WindowEvents, AppEvents } from './events'
 import { Container } from './injector/Container'
 import { getNucleiMetadata } from './decorators/utils'
-import { CrashReporter } from './CrashReporter'
+//import { CrashReporter } from './CrashReporter'
 
 export class Application {
 
@@ -54,7 +54,7 @@ export class Application {
 
 
       // @TODO: How should windows be initiated?
-      app.on(AppEvents.READY, () => {
+      /*app.on(AppEvents.READY, () => {
         (this.metadata.windows || []).forEach((window: any) => { 
           const WindowInstance = this.container.get(window)
           const windowOptions = getNucleiMetadata(window, windowMetadataKeys)
@@ -75,18 +75,18 @@ export class Application {
                 this.browserWindow.webContents.closeDevTools()
                 this.browserWindow.hide()
               } else {
-                this.browserWindow.webContents.openDevTools(/*{ detach: true }*/)
+                this.browserWindow.webContents.openDevTools()
               }
             })
           }
   
           if (toggleDevtools) WindowInstance.toggleDevtools()
   
-          /*const BaseWindow = class extends WindowInstance {
+          const BaseWindow = class extends WindowInstance {
   
-          }*/
+          }
         })
-      })
+      })*/
     }
   }
 

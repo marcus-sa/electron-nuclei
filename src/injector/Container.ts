@@ -1,38 +1,86 @@
-import { PARAMTYPES_METADATA, SINGLE_SCOPE_METADATA, SELF_DECLARED_DEPS_METADATA } from '../constants'
+import { PARAMTYPES_METADATA, SINGLE_SCOPE_METADATA, SELF_DECLARED_DEPS_METADATA, COMPONENT_METADATA } from '../constants'
 
-import { NucleiModule, NucleiClassDecorator, NucleiType } from '../types'
+import { NucleiModule, NucleiType, Token } from '../types'
+import {BoundContainerModule, CLASS, ContainerModule, FACTORY} from "./types";
 
 export class Container {
 
-  private readonly store = new Map<string, NucleiType>()
+  private readonly store = new Map<Symbol, NucleiType>()
 
-  public getModuleName(module: NucleiModule): string {
-    return module.name || module.constructor.name
+  public static getModuleName(module: Token): Symbol {
+  	return typeof module !== 'string'
+				? module.name || module.constructor.name
+				: module
   }
 
-  public getDependencies(module: NucleiModule) {
+  private getDependencies(module: NucleiModule) {
     return Reflect.getMetadata(PARAMTYPES_METADATA, module)
   }
 
-  public bind(module: NucleiModule) {
-    const moduleName = this.getModuleName(module)
+  private getModuleType(module: /*ContainerModule*/ any) {
+  	if (module.provide && module.useFactory) return FACTORY
+		if (module.provide && module.useClass) return CLASS
 
-    const dependencies = this.getDependencies(module)
-    console.log(moduleName, dependencies)
-    const instance = this.injectDependencies(module, dependencies)
+		return COMPONENT_METADATA
+	}
 
-    this.store.set(moduleName, instance)
+	private createFactory({ provide, useFactory, inject = [] }) {
+		return {
+			name: provide,
+			module: useFactory(...inject.map(
+				dependency => this.get(dependency)
+			))
+		}
+	}
 
-    console.log(`[${moduleName}]: has been bound to container.`)
+	/*private createClass({ provide, useClass, inject }: ContainerModule) {
+
+	}*/
+
+	private createComponent(module: NucleiModule) {
+		const dependencies = this.getDependencies(module)
+
+		return {
+			module: this.injectComponentDependencies(module, dependencies),
+			name: Container.getModuleName(module)
+		}
+	}
+
+	private createModule(type, module): BoundContainerModule {
+  	switch (type) {
+			case FACTORY:
+				return this.createFactory(module)
+
+			/*case CLASS:
+				return this.createClass(module)*/
+
+			default:
+				return this.createComponent(module)
+		}
+	}
+
+  public bind<T>(module: ContainerModule/*, overwrite: boolean = true*/): T {
+  	const type = this.getModuleType(module)
+
+		const { name, module: instance } = this.createModule(type, module)
+
+    /*if (!overwrite && this.store.has(moduleName)) {
+      console.error(`[${moduleName}]: no rebind to container.`)
+      return this.store.get(moduleName)//
+    }*/
+
+    console.log(Reflect.getMetadata(SELF_DECLARED_DEPS_METADATA, module))
+
+    this.store.set(name, instance)
+
+    console.info(`[${name}]: has been bound to container.`)
 
     return instance
   }
 
-  public get(module: NucleiModule) {
-    const moduleName = this.getModuleName(module)
+  public get<T extends NucleiType>(module: Token & NucleiModule) { //: T
+		const moduleName = Container.getModuleName(module)
     const singleScope = Reflect.hasMetadata(SINGLE_SCOPE_METADATA, module)
-    
-    console.log(module, 'singleScope', singleScope)
 
     if (singleScope || !this.store.has(moduleName)) {
       return this.bind(module)
@@ -41,12 +89,11 @@ export class Container {
     return this.store.get(moduleName)
   }
 
-  private injectDependencies(module, dependencies: NucleiModule[] = []) {
-    const resolved = dependencies.map(
-      dependency => this.get(dependency)
-    )
-
+  private injectComponentDependencies(module, dependencies?: NucleiModule[]) {
     //console.log(module, dependencies)
+    const resolved = (dependencies || []).map(
+      dependency => typeof dependency === 'function' && this.get(dependency)
+    )
 
     return new module(...resolved)
   }

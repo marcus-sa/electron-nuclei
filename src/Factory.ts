@@ -21,12 +21,12 @@ export abstract class Factory {
 
     Object.keys(this.metadata).forEach(key => {
       this.metadata[key].forEach(module => {
-        this.container.bind(module)
+        this.container.bind(module) // Don't rebind to prevent circular dependency
       })
     })
 
     // Bind and create application config
-    this.container.bind(Config).create(options)
+    this.container.bind<Config>(Config).create(options)
 
     // Bind crash reporter
     // Moved crash reporter to external plugin

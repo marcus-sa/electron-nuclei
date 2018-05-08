@@ -1,4 +1,5 @@
 import 'reflect-metadata'
+import { NucleiType } from './types'
 
 export * from './types'
 export * from './events'
@@ -9,3 +10,5 @@ export * from './decorators'
 export { Config } from './Config'
 //export { createFakeModule } from './createFakeModule'
 export { Factory } from './Factory'
+
+export const forwardRef = (ref: () => NucleiType) => ({ ref })

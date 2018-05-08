@@ -1,6 +1,7 @@
 import { BrowserWindowConstructorOptions } from 'electron'
 
 import { Window, Component } from './decorators'
+import {ContainerModule} from "./injector/types";
 
 export interface NucleiType {
   new(...args: any[]): any
@@ -29,5 +30,7 @@ export type AppOptions = {
 
 export interface ModuleMetadata {
   windows?: (typeof Window | NucleiModule)[]
-  components?: (typeof Component | NucleiModule)[]
+  components?: (typeof Component | ContainerModule)[]
 }
+
+export type Token = any//NucleiModule | string | ForwardRef

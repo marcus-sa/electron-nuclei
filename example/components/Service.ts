@@ -1,10 +1,15 @@
-import { Component } from '../../src'
+import { Component, forwardRef, Inject } from '../../src'
 
 import { Logger } from './Logger'
 
 @Component()
 export class Service {
-  public constructor(
+
+  constructor(
+    @Inject(forwardRef(() => Logger))
     private readonly logger: Logger
-  ) { }
+  ) {
+    console.log(logger)
+  }
+
 }

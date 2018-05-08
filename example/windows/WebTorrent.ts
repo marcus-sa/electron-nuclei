@@ -1,4 +1,4 @@
-import { Window, CrashReporter } from '../../src'
+import { Window } from '../../src'
 
 @Window({
   // Nuclei window metadata
